@@ -1,41 +1,35 @@
-<!DOCTYPE html> 
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
-    <style>
-        .bg-change {
-            background-color: rgb(233, 138, 229);
-        }
-    </style>
-
-    <script>
-    $(document).ready(function(){
-
-        $("#hide").click(function(){
-            $("p").hide();
-        });
-
-        $("#show").click(function(){
-            $("p").show();
-        });
-
-        // Add CSS class using jQuery
-        $("#color").click(function(){
-            $("body").addClass("bg-change");
-        });
-
-    });
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Result Calculator</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-    <p style="color:purple;">This is the task given in the class.</p>
+<div class="container">
+    <h2>Student Result Calculator</h2>
 
-    <button id="hide">Hide</button>
-    <button id="show">Show</button>
-    <button id="color">Change Page Color</button>
+    <input type="text" id="name" placeholder="Enter Student Name"><br><br>
 
+    <input type="number" id="math" placeholder="Basic Math Marks"><br><br>
+    <input type="number" id="science" placeholder="Science Marks"><br><br>
+    <input type="number" id="english" placeholder="English Marks"><br><br>
+    <input type="number" id="social" placeholder="Social Studies Marks"><br><br>
+    <input type="number" id="economics" placeholder="Economics Marks"><br><br>
+    <input type="number" id="businessMath" placeholder="Business Mathematics Marks"><br><br>
+    <input type="number" id="accounts" placeholder="Accounts Marks"><br><br>
+    <input type="number" id="nepali" placeholder="Nepali Marks"><br><br>
+
+    <button onclick="calculateResult()">Calculate Result</button>
+
+    <p id="total"></p>
+    <p id="percentage"></p>
+    <p id="result"></p>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>

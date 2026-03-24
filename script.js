@@ -1,34 +1,41 @@
-function calculate(operation){
+function calculateResult() {
 
-    let n1 = Number(document.getElementById("n1").value);
-    let n2 = Number(document.getElementById("n2").value);
-    let result;
+    let math = Number(document.getElementById("math").value) || 0;
+    let science = Number(document.getElementById("science").value) || 0;
+    let english = Number(document.getElementById("english").value) || 0;
+    let social = Number(document.getElementById("social").value) || 0;
+    let economics = Number(document.getElementById("economics").value) || 0;
+    let businessMath = Number(document.getElementById("businessMath").value) || 0;
+    let accounts = Number(document.getElementById("accounts").value) || 0;
+    let nepali = Number(document.getElementById("nepali").value) || 0;
 
-    if (isNaN(n1) || isNaN(n2)) {
-        result = "Please enter valid numbers";
-    }
-    else if (n1 > 100 || n2 > 100) {
-        result = "Number should not be greater than 100";
-    }
-    else if(operation === "add"){
-        result = n1 + n2;
-    }
-    else if(operation === "sub"){
-        result = n1 - n2;
-    }
-    else if(operation === "mul"){
-        result = n1 * n2;
-    }
-    else if(operation === "div"){
-        if(n2 === 0){
-            result = "Cannot divide by zero";
-        } else {
-            result = n1 / n2;
-        }
-    }
-    else{
-        result = "Invalid operation";
+    let total = math + science + english + social + economics + businessMath + accounts + nepali;
+
+    let percentage = (total / 800) * 100;
+
+    document.getElementById("total").innerHTML = "Total Marks: " + total + "/800";
+    document.getElementById("percentage").innerHTML = "Percentage: " + percentage.toFixed(2) + "%";
+
+    let resultText = "";
+    let color = "";
+
+    if (percentage >= 80) {
+        resultText = "Distinction";
+        color = "green";
+    } else if (percentage >= 60) {
+        resultText = "First Division";
+        color = "blue";
+    } else if (percentage >= 50) {
+        resultText = "Second Division";
+        color = "orange";
+    } else if (percentage >= 40) {
+        resultText = "Third Division";
+        color = "brown";
+    } else {
+        resultText = "Fail";
+        color = "red";
     }
 
-    document.getElementById("result").innerText = "Result: " + result;
+    document.getElementById("result").innerHTML = resultText;
+    document.getElementById("result").style.color = color;
 }
