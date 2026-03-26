@@ -1,41 +1,83 @@
 <!DOCTYPE html> 
 <html>
 <head>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    
-    <style>
-        .bg-change {
-            background-color: rgb(233, 138, 229);
-        }
-    </style>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
-    <script>
-    $(document).ready(function(){
+<script> 
+$(document).ready(function(){
+  $("button").click(function(){
+    var div = $("div");
 
-        $("#hide").click(function(){
-            $("p").hide();
-        });
+    // Step 1
+    div.queue(function(next){
+      $(this).css("background-color", "red");
+      next();
+    }).animate({
+      top: '500px',
+      height: '150px',
+      width: '120px',
+      opacity: 0.5
+    }, "slow");
 
-        $("#show").click(function(){
-            $("p").show();
-        });
+    // Step 2
+    div.queue(function(next){
+      $(this).css("background-color", "blue");
+      next();
+    }).animate({
+      left: '350px',
+      height: '200px',
+      width: '500px',
+      opacity: 0.7
+    }, "slow");
 
-        // Add CSS class using jQuery
-        $("#color").click(function(){
-            $("body").addClass("bg-change");
-        });
+    // Step 3
+    div.queue(function(next){
+      $(this).css("background-color", "green");
+      next();
+    }).animate({
+      top: '100px',
+      height: '130px',
+      width: '130px',
+      opacity: 0.4
+    }, "slow");
 
-    });
-    </script>
+    // Step 4
+    div.queue(function(next){
+      $(this).css("background-color", "orange");
+      next();
+    }).animate({
+      left: '0px',
+      height: '100px',
+      width: '100px',
+      opacity: 1
+    }, "slow");
+
+  });
+});
+</script> 
+
 </head>
-
 <body>
 
-    <p style="color:purple;">This is the task given in the class.</p>
+<button>Start Animation</button>
 
-    <button id="hide">Hide</button>
-    <button id="show">Show</button>
-    <button id="color">Change Page Color</button>
+
+
+<div style="
+  background:#98bf21;
+  height:100px;
+  width:100px;
+  position:absolute;
+  top:100px;
+  left:0;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+">
+Hi Aarya
+</div>
 
 </body>
 </html>
