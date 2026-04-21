@@ -21,7 +21,6 @@ const COLORS = {
   green: '#16A34A',
   lightGreen: '#EAFBF0',
   bg: '#F5F7FB',
-  card: '#FFFFFF',
   textDark: '#1F2937',
   textLight: '#6B7280',
   border: '#E5E7EB',
@@ -36,14 +35,52 @@ interface ActionItem {
   icon: FeatherIconName;
   color: string;
   bg: string;
-  pressed: string;
+  pressedColor: string;
+  screen?: string;
 }
 
 const actions: ActionItem[] = [
-  { title: 'Report Harassment', subtitle: 'Create report', icon: 'alert-triangle', color: COLORS.red, bg: COLORS.lightRed, pressed: '#F8D7D7' },
-  { title: 'Track Complaint', subtitle: 'View status', icon: 'file-text', color: COLORS.blue, bg: COLORS.lightBlue, pressed: '#DCE9FF' },
-  { title: 'Safety Learning', subtitle: 'Quiz and tips', icon: 'book-open', color: COLORS.orange, bg: COLORS.lightOrange, pressed: '#FFE5CC' },
-  { title: 'Emergency Help', subtitle: 'Urgent support', icon: 'phone-call', color: COLORS.red, bg: COLORS.lightRed, pressed: '#F8D7D7' },
+  {
+    title: 'Report Harassment',
+    subtitle: 'Create report',
+    icon: 'alert-triangle',
+    color: COLORS.red,
+    bg: COLORS.lightRed,
+    pressedColor: '#F8D7D7',
+  },
+  {
+    title: 'Track Complaint',
+    subtitle: 'View status',
+    icon: 'file-text',
+    color: COLORS.blue,
+    bg: COLORS.lightBlue,
+    pressedColor: '#DCE9FF',
+  },
+  {
+    title: 'Safety Learning',
+    subtitle: 'Quiz and tips',
+    icon: 'book-open',
+    color: COLORS.orange,
+    bg: COLORS.lightOrange,
+    pressedColor: '#FFE5CC',
+  },
+  {
+    title: 'Emergency Help',
+    subtitle: 'Urgent support',
+    icon: 'phone-call',
+    color: COLORS.red,
+    bg: COLORS.lightRed,
+    pressedColor: '#F8D7D7',
+  },
+  {
+    title: 'Contact Us',
+    subtitle: 'Get in touch',
+    icon: 'mail',
+    color: COLORS.green,
+    bg: COLORS.lightGreen,
+    pressedColor: '#C6F6D5',
+    screen: 'ContactUs',
+  },
 ];
 
 const recentComplaints = [
@@ -52,11 +89,22 @@ const recentComplaints = [
   { id: 'CS-1003', title: 'Threat messages', status: 'Resolved' },
 ];
 
-const DashboardScreen = () => {
+// ✅ navigation prop correctly received here
+const DashboardScreen = ({ navigation }: any) => {
+
+  const handleActionPress = (item: ActionItem) => {
+    if (item.screen) {
+      navigation.navigate(item.screen);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.bg} />
-      <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        contentContainerStyle={styles.scroll}
+        showsVerticalScrollIndicator={false}
+      >
 
         {/* Header */}
         <View style={styles.header}>
@@ -69,9 +117,18 @@ const DashboardScreen = () => {
             <Text style={styles.title}>Cyber Sathi</Text>
             <Text style={styles.subtitle}>Stay safe online</Text>
           </View>
-          <Pressable style={({ pressed }) => [styles.bell, pressed && { backgroundColor: COLORS.blue }]}> 
+          <Pressable
+            style={({ pressed }) => [
+              styles.bell,
+              pressed && { backgroundColor: COLORS.blue },
+            ]}
+          >
             {({ pressed }) => (
-              <Feather name="bell" size={20} color={pressed ? COLORS.white : COLORS.blue} />
+              <Feather
+                name="bell"
+                size={20}
+                color={pressed ? COLORS.white : COLORS.blue}
+              />
             )}
           </Pressable>
         </View>
@@ -79,20 +136,32 @@ const DashboardScreen = () => {
         {/* Hero card */}
         <View style={styles.hero}>
           <View style={styles.heroTopRow}>
-            <View>
+            <View style={{ flex: 1, marginRight: 12 }}>
               <Text style={styles.heroTitle}>Welcome back</Text>
-              <Text style={styles.heroText}>Report abuse, track complaints, and learn cyber safety.</Text>
+              <Text style={styles.heroText}>
+                Report abuse, track complaints, and learn cyber safety.
+              </Text>
             </View>
             <View style={styles.profileMini}>
               <Feather name="user" size={20} color={COLORS.red} />
             </View>
           </View>
           <View style={styles.heroButtonsRow}>
-            <Pressable style={({ pressed }) => [styles.primaryBtn, pressed && styles.primaryBtnPressed]}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.primaryBtn,
+                pressed && styles.primaryBtnPressed,
+              ]}
+            >
               <Feather name="plus-circle" size={18} color={COLORS.white} />
               <Text style={styles.primaryText}>New Report</Text>
             </Pressable>
-            <Pressable style={({ pressed }) => [styles.secondaryBtn, pressed && styles.secondaryBtnPressed]}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.secondaryBtn,
+                pressed && styles.secondaryBtnPressed,
+              ]}
+            >
               <Feather name="search" size={18} color={COLORS.blue} />
               <Text style={styles.secondaryText}>Track</Text>
             </Pressable>
@@ -107,15 +176,36 @@ const DashboardScreen = () => {
               key={index}
               style={({ pressed }) => [
                 styles.card,
-                pressed && { transform: [{ scale: 0.97 }], borderColor: item.color },
+                pressed && {
+                  transform: [{ scale: 0.97 }],
+                  borderColor: item.color,
+                },
               ]}
+              // ✅ navigation.navigate called here
+              onPress={() => handleActionPress(item)}
             >
               {({ pressed }) => (
                 <>
-                  <View style={[styles.iconWrap, { backgroundColor: pressed ? item.pressed : item.bg }]}>
+                  <View
+                    style={[
+                      styles.iconWrap,
+                      {
+                        backgroundColor: pressed
+                          ? item.pressedColor
+                          : item.bg,
+                      },
+                    ]}
+                  >
                     <Feather name={item.icon} size={22} color={item.color} />
                   </View>
-                  <Text style={[styles.cardTitle, pressed && { color: item.color }]}>{item.title}</Text>
+                  <Text
+                    style={[
+                      styles.cardTitle,
+                      pressed && { color: item.color },
+                    ]}
+                  >
+                    {item.title}
+                  </Text>
                   <Text style={styles.cardSub}>{item.subtitle}</Text>
                 </>
               )}
@@ -147,12 +237,19 @@ const DashboardScreen = () => {
             <View style={styles.challengeIcon}>
               <Feather name="award" size={20} color={COLORS.orange} />
             </View>
-            <View>
+            <View style={{ flex: 1 }}>
               <Text style={styles.challengeTitle}>Complete today's challenge</Text>
-              <Text style={styles.challengeText}>Review your privacy settings and earn 50 points.</Text>
+              <Text style={styles.challengeText}>
+                Review your privacy settings and earn 50 points.
+              </Text>
             </View>
           </View>
-          <Pressable style={({ pressed }) => [styles.challengeBtn, pressed && { backgroundColor: '#D45518' }]}>
+          <Pressable
+            style={({ pressed }) => [
+              styles.challengeBtn,
+              pressed && { backgroundColor: '#D45518' },
+            ]}
+          >
             <Text style={styles.challengeBtnText}>Start</Text>
           </Pressable>
         </View>
@@ -163,7 +260,10 @@ const DashboardScreen = () => {
           {recentComplaints.map((item, index) => (
             <View
               key={item.id}
-              style={[styles.listRow, index !== recentComplaints.length - 1 && styles.listBorder]}
+              style={[
+                styles.listRow,
+                index !== recentComplaints.length - 1 && styles.listBorder,
+              ]}
             >
               <View style={styles.listLeft}>
                 <View style={styles.listIcon}>
@@ -177,17 +277,21 @@ const DashboardScreen = () => {
               <View
                 style={[
                   styles.statusBadge,
-                  item.status === 'Resolved' ? { backgroundColor: COLORS.lightGreen }
-                  : item.status === 'In Review' ? { backgroundColor: COLORS.lightBlue }
-                  : { backgroundColor: COLORS.lightRed },
+                  item.status === 'Resolved'
+                    ? { backgroundColor: COLORS.lightGreen }
+                    : item.status === 'In Review'
+                    ? { backgroundColor: COLORS.lightBlue }
+                    : { backgroundColor: COLORS.lightRed },
                 ]}
               >
                 <Text
                   style={[
                     styles.statusText,
-                    item.status === 'Resolved' ? { color: COLORS.green }
-                    : item.status === 'In Review' ? { color: COLORS.blue }
-                    : { color: COLORS.red },
+                    item.status === 'Resolved'
+                      ? { color: COLORS.green }
+                      : item.status === 'In Review'
+                      ? { color: COLORS.blue }
+                      : { color: COLORS.red },
                   ]}
                 >
                   {item.status}
@@ -232,17 +336,20 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   scroll: { padding: 16 },
 
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  logoBox: {
-    width: 60,
-    height: 60,
-    borderRadius: 16,
-    marginRight: 10,
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  headerTextWrap: { flex: 1 },
+  logoBox: { width: 60, height: 60, borderRadius: 16 },
+  headerTextWrap: { flex: 1, marginLeft: 10 },
   title: { fontSize: 22, fontWeight: 'bold', color: COLORS.blue },
   subtitle: { fontSize: 13, color: COLORS.textLight },
-  bell: { backgroundColor: COLORS.white, padding: 10, borderRadius: 20 },
+  bell: {
+    backgroundColor: COLORS.white,
+    padding: 10,
+    borderRadius: 20,
+  },
 
   hero: {
     backgroundColor: COLORS.white,
@@ -254,21 +361,60 @@ const styles = StyleSheet.create({
     borderLeftColor: COLORS.red,
     borderColor: 'transparent',
   },
-  heroTopRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' },
-  profileMini: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.lightRed, justifyContent: 'center', alignItems: 'center' },
+  heroTopRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  profileMini: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: COLORS.lightRed,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   heroTitle: { fontSize: 18, fontWeight: 'bold', color: COLORS.textDark },
-  heroText: { fontSize: 14, color: COLORS.textLight, marginTop: 6, maxWidth: 240 },
+  heroText: {
+    fontSize: 14,
+    color: COLORS.textLight,
+    marginTop: 6,
+  },
   heroButtonsRow: { flexDirection: 'row', marginTop: 14 },
-  primaryBtn: { backgroundColor: COLORS.red, paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, marginRight: 10, flexDirection: 'row', alignItems: 'center' },
+  primaryBtn: {
+    backgroundColor: COLORS.red,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    marginRight: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   primaryBtnPressed: { backgroundColor: '#C62828' },
   primaryText: { color: COLORS.white, marginLeft: 6, fontWeight: '600' },
-  secondaryBtn: { backgroundColor: COLORS.lightBlue, paddingVertical: 10, paddingHorizontal: 16, borderRadius: 10, flexDirection: 'row', alignItems: 'center' },
+  secondaryBtn: {
+    backgroundColor: COLORS.lightBlue,
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   secondaryBtnPressed: { backgroundColor: '#DCE9FF' },
   secondaryText: { color: COLORS.blue, marginLeft: 6, fontWeight: '600' },
 
-  section: { marginTop: 20, fontSize: 18, fontWeight: 'bold', color: COLORS.textDark },
+  section: {
+    marginTop: 20,
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.textDark,
+  },
 
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+  },
   card: {
     width: '48%',
     backgroundColor: COLORS.white,
@@ -278,41 +424,151 @@ const styles = StyleSheet.create({
     borderWidth: 1.5,
     borderColor: COLORS.border,
   },
-  iconWrap: { padding: 12, borderRadius: 30, marginBottom: 10, alignSelf: 'flex-start' },
-  cardTitle: { fontSize: 14, fontWeight: '700', color: COLORS.textDark },
+  iconWrap: {
+    padding: 12,
+    borderRadius: 30,
+    marginBottom: 10,
+    alignSelf: 'flex-start',
+  },
+  cardTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.textDark,
+  },
   cardSub: { fontSize: 12, color: COLORS.textLight, marginTop: 4 },
 
   row: { flexDirection: 'row', justifyContent: 'space-between' },
-  smallCard: { backgroundColor: COLORS.white, padding: 16, borderRadius: 12, width: '30%', alignItems: 'center', marginTop: 10 },
+  smallCard: {
+    backgroundColor: COLORS.white,
+    padding: 16,
+    borderRadius: 12,
+    width: '30%',
+    alignItems: 'center',
+    marginTop: 10,
+  },
   num: { fontSize: 22, fontWeight: 'bold' },
   label: { fontSize: 12, color: COLORS.textLight },
 
-  challengeCard: { backgroundColor: COLORS.white, padding: 16, borderRadius: 14, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  challengeLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 10 },
-  challengeIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.lightOrange, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
-  challengeTitle: { fontSize: 14, fontWeight: '700', color: COLORS.textDark },
-  challengeText: { fontSize: 12, color: COLORS.textLight, marginTop: 2, maxWidth: 180 },
-  challengeBtn: { backgroundColor: COLORS.orange, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 10 },
+  challengeCard: {
+    backgroundColor: COLORS.white,
+    padding: 16,
+    borderRadius: 14,
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  challengeLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 10,
+  },
+  challengeIcon: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: COLORS.lightOrange,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  challengeTitle: {
+    fontSize: 14,
+    fontWeight: '700',
+    color: COLORS.textDark,
+  },
+  challengeText: {
+    fontSize: 12,
+    color: COLORS.textLight,
+    marginTop: 2,
+  },
+  challengeBtn: {
+    backgroundColor: COLORS.orange,
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 10,
+  },
   challengeBtnText: { color: COLORS.white, fontWeight: '700' },
 
-  listCard: { backgroundColor: COLORS.white, borderRadius: 14, paddingHorizontal: 14, marginTop: 10 },
-  listRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', minHeight: 64, paddingVertical: 10 },
-  listBorder: { borderBottomWidth: 1, borderBottomColor: COLORS.border },
-  listLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 8 },
-  listIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.lightBlue, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
-  listTitle: { fontSize: 14, fontWeight: '600', color: COLORS.textDark },
+  listCard: {
+    backgroundColor: COLORS.white,
+    borderRadius: 14,
+    paddingHorizontal: 14,
+    marginTop: 10,
+  },
+  listRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    minHeight: 64,
+    paddingVertical: 10,
+  },
+  listBorder: {
+    borderBottomWidth: 1,
+    borderBottomColor: COLORS.border,
+  },
+  listLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flex: 1,
+    marginRight: 8,
+  },
+  listIcon: {
+    width: 38,
+    height: 38,
+    borderRadius: 19,
+    backgroundColor: COLORS.lightBlue,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  listTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: COLORS.textDark,
+  },
   listId: { fontSize: 12, color: COLORS.textLight, marginTop: 2 },
-  statusBadge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
+  statusBadge: {
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 999,
+  },
   statusText: { fontSize: 11, fontWeight: '700' },
 
-  tipBox: { backgroundColor: COLORS.white, padding: 16, borderRadius: 12, marginTop: 10 },
+  tipBox: {
+    backgroundColor: COLORS.white,
+    padding: 16,
+    borderRadius: 12,
+    marginTop: 10,
+  },
   tip: { marginBottom: 6, fontSize: 14, color: COLORS.textDark },
 
-  progressCard: { backgroundColor: COLORS.white, padding: 16, borderRadius: 14, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
+  progressCard: {
+    backgroundColor: COLORS.white,
+    padding: 16,
+    borderRadius: 14,
+    marginTop: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
   progressLabel: { fontSize: 12, color: COLORS.textLight },
-  progressLevel: { fontSize: 18, fontWeight: 'bold', color: COLORS.blue, marginTop: 2 },
+  progressLevel: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: COLORS.blue,
+    marginTop: 2,
+  },
   progressSub: { fontSize: 12, color: COLORS.textLight, marginTop: 4 },
-  pointsCircle: { width: 76, height: 76, borderRadius: 38, backgroundColor: COLORS.lightRed, justifyContent: 'center', alignItems: 'center' },
+  pointsCircle: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: COLORS.lightRed,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   pointsNum: { fontSize: 22, fontWeight: 'bold', color: COLORS.red },
   pointsLabel: { fontSize: 12, color: COLORS.red },
 });
