@@ -3,7 +3,7 @@ import {
   SafeAreaView, ScrollView, View, Text,
   StyleSheet, Pressable, StatusBar, Image,
 } from 'react-native';
-import Feather from 'react-native-vector-icons/Feather';
+import Feather from '@react-native-vector-icons/feather';
 
 const COLORS = {
   blue: '#1565C0', lightBlue: '#EAF2FF',
@@ -15,32 +15,10 @@ const COLORS = {
   textLight: '#6B7280', border: '#E5E7EB', white: '#FFFFFF',
 };
 
-type FeatherIconName = React.ComponentProps<typeof Feather>['name'];
-
-interface ActionItem {
-  title: string;
-  subtitle: string;
-  icon: FeatherIconName;
-  color: string;
-  bg: string;
-  pressedColor: string;
-  screen: string;
-}
-
-// ── 6 Quick Action cards, each navigates to a screen ──
-const actions: ActionItem[] = [
-  { title: 'Report Harassment', subtitle: 'File a complaint',   icon: 'alert-triangle', color: COLORS.red,    bg: COLORS.lightRed,    pressedColor: '#F8D7D7', screen: 'ReportHarassment' },
-  { title: 'Track Complaint',   subtitle: 'Check status',       icon: 'file-text',      color: COLORS.blue,   bg: COLORS.lightBlue,   pressedColor: '#DCE9FF', screen: 'TrackComplaint'   },
-  { title: 'Emergency Help',    subtitle: 'Urgent support',     icon: 'phone-call',     color: COLORS.orange, bg: COLORS.lightOrange, pressedColor: '#FFE5CC', screen: 'EmergencyHelp'    },
-  { title: 'Safety Learning',   subtitle: 'Tips and quizzes',   icon: 'book-open',      color: COLORS.teal,   bg: COLORS.lightTeal,   pressedColor: '#99F6E4', screen: 'SafetyLearning'   },
-  { title: 'Contact Us',        subtitle: 'Get in touch',       icon: 'mail',           color: COLORS.green,  bg: COLORS.lightGreen,  pressedColor: '#C6F6D5', screen: 'ContactUs'        },
-  { title: 'Crime Info',        subtitle: 'Know the law',       icon: 'book',           color: COLORS.blue,   bg: COLORS.lightBlue,   pressedColor: '#DCE9FF', screen: 'CrimeInfo'        },
-];
-
 const recentComplaints = [
-  { id: 'CS-2026-1001', title: 'Instagram harassment', status: 'In Review'  as const },
-  { id: 'CS-2026-1002', title: 'Fake profile report',  status: 'Submitted'  as const },
-  { id: 'CS-2026-1003', title: 'Threat messages',      status: 'Resolved'   as const },
+  { id: 'CS-2026-1001', title: 'Instagram harassment', status: 'In Review'  as const, date: 'Jan 10' },
+  { id: 'CS-2026-1002', title: 'Fake profile report',  status: 'Submitted'  as const, date: 'Jan 8'  },
+  { id: 'CS-2026-1003', title: 'Threat messages',      status: 'Resolved'   as const, date: 'Jan 5'  },
 ];
 
 const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
@@ -49,14 +27,13 @@ const STATUS_COLORS: Record<string, { bg: string; text: string }> = {
   'Resolved':   { bg: '#EAFBF0', text: '#16A34A' },
 };
 
-// ✅ navigation prop — allows all buttons to navigate
 const DashboardScreen = ({ navigation }: any) => {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" backgroundColor={COLORS.bg} />
       <ScrollView contentContainerStyle={styles.scroll} showsVerticalScrollIndicator={false}>
 
-        {/* ── Header ── */}
+        {/* Header */}
         <View style={styles.header}>
           <Image
             source={require('../../assets/cybersathi-logo.png')}
@@ -67,102 +44,90 @@ const DashboardScreen = ({ navigation }: any) => {
             <Text style={styles.title}>Cyber Sathi</Text>
             <Text style={styles.subtitle}>Stay safe online</Text>
           </View>
-          <Pressable style={({ pressed }) => [styles.bell, pressed && { backgroundColor: COLORS.lightBlue }]}>
-            {({ pressed }) => (
-              <Feather name="bell" size={20} color={pressed ? COLORS.blue : COLORS.textLight} />
-            )}
+          <Pressable
+            onPress={() => navigation.navigate('ContactUs')}
+            style={({ pressed }) => [styles.headerBtn, pressed && { backgroundColor: COLORS.lightBlue }]}
+          >
+            <Feather name="mail" size={20} color={COLORS.blue} />
           </Pressable>
         </View>
 
-        {/* ── Hero ── */}
+        {/* Hero */}
         <View style={styles.hero}>
           <View style={{ flex: 1, marginRight: 12 }}>
-            <Text style={styles.heroTitle}>Welcome back 👋</Text>
-            <Text style={styles.heroText}>Report, track, and stay informed about cybercrime.</Text>
+            <Text style={styles.heroTitle}>Welcome to Cyber Sathi 👋</Text>
+            <Text style={styles.heroText}>
+              Report cybercrime, track complaints, and learn how to stay safe online.
+            </Text>
           </View>
           <View style={styles.profileMini}>
             <Feather name="user" size={20} color={COLORS.red} />
           </View>
         </View>
 
-        {/* ── Quick Actions ── */}
+        {/* Stats */}
+        <View style={styles.statsRow}>
+          {[
+            { label: 'Submitted', count: 5, color: COLORS.red,   bg: COLORS.lightRed   },
+            { label: 'In Review', count: 2, color: COLORS.blue,  bg: COLORS.lightBlue  },
+            { label: 'Resolved',  count: 3, color: COLORS.green, bg: COLORS.lightGreen },
+          ].map(item => (
+            <View key={item.label} style={[styles.statCard, { borderTopColor: item.color }]}>
+              <Text style={[styles.statNum, { color: item.color }]}>{item.count}</Text>
+              <Text style={styles.statLabel}>{item.label}</Text>
+            </View>
+          ))}
+        </View>
+
+        {/* Quick Actions */}
         <Text style={styles.section}>Quick Actions</Text>
-        <View style={styles.grid}>
-          {actions.map((item, index) => (
+        <View style={styles.actionsGrid}>
+          {[
+            { title: 'Report',    icon: 'alert-triangle', color: COLORS.red,    bg: COLORS.lightRed,    screen: 'Report'    },
+            { title: 'Track',     icon: 'file-text',      color: COLORS.blue,   bg: COLORS.lightBlue,   screen: 'Track'     },
+            { title: 'Emergency', icon: 'phone-call',     color: COLORS.orange, bg: COLORS.lightOrange, screen: 'Emergency' },
+            { title: 'Learn',     icon: 'book-open',      color: COLORS.teal,   bg: COLORS.lightTeal,   screen: 'Learn'     },
+          ].map((item, i) => (
             <Pressable
-              key={index}
+              key={i}
               onPress={() => navigation.navigate(item.screen)}
               style={({ pressed }) => [
-                styles.card,
-                pressed && { transform: [{ scale: 0.97 }], borderColor: item.color },
+                styles.actionCard,
+                { borderTopColor: item.color },
+                pressed && { transform: [{ scale: 0.96 }] },
               ]}
             >
-              {({ pressed }) => (
-                <>
-                  <View style={[styles.iconWrap, { backgroundColor: pressed ? item.pressedColor : item.bg }]}>
-                    <Feather name={item.icon} size={22} color={item.color} />
-                  </View>
-                  <Text style={[styles.cardTitle, pressed && { color: item.color }]}>{item.title}</Text>
-                  <Text style={styles.cardSub}>{item.subtitle}</Text>
-                </>
-              )}
+              <View style={[styles.actionIcon, { backgroundColor: item.bg }]}>
+                <Feather name={item.icon as any} size={24} color={item.color} />
+              </View>
+              <Text style={[styles.actionTitle, { color: item.color }]}>{item.title}</Text>
             </Pressable>
           ))}
         </View>
 
-        {/* ── Overview ── */}
-        <Text style={styles.section}>Overview</Text>
-        <View style={styles.row}>
-          {[
-            { label: 'Submitted', count: 5, color: COLORS.red   },
-            { label: 'In Review', count: 2, color: COLORS.blue  },
-            { label: 'Resolved',  count: 3, color: COLORS.green },
-          ].map(item => (
-            <View key={item.label} style={styles.smallCard}>
-              <Text style={[styles.num, { color: item.color }]}>{item.count}</Text>
-              <Text style={styles.label}>{item.label}</Text>
-            </View>
-          ))}
-        </View>
-
-        {/* ── Daily Challenge ── */}
-        <Text style={styles.section}>Daily Safety Challenge</Text>
-        <View style={styles.challengeCard}>
-          <View style={styles.challengeLeft}>
-            <View style={styles.challengeIcon}>
-              <Feather name="award" size={20} color={COLORS.orange} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.challengeTitle}>Complete today's challenge</Text>
-              <Text style={styles.challengeText}>Review your privacy settings and earn 50 points.</Text>
-            </View>
-          </View>
-          <Pressable
-            style={({ pressed }) => [styles.challengeBtn, pressed && { backgroundColor: '#D45518' }]}
-            onPress={() => navigation.navigate('SafetyLearning')}
-          >
-            <Text style={styles.challengeBtnText}>Start</Text>
+        {/* Recent Complaints */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.section}>Recent Complaints</Text>
+          <Pressable onPress={() => navigation.navigate('Track')}>
+            <Text style={styles.seeAll}>See all →</Text>
           </Pressable>
         </View>
-
-        {/* ── Recent Complaints ── */}
-        <Text style={styles.section}>Recent Complaints</Text>
         <View style={styles.listCard}>
           {recentComplaints.map((item, index) => (
             <Pressable
               key={item.id}
-              onPress={() => navigation.navigate('TrackComplaint', { complaintId: item.id })}
+              onPress={() => navigation.navigate('Track', { complaintId: item.id })}
               style={[styles.listRow, index !== recentComplaints.length - 1 && styles.listBorder]}
             >
-              <View style={styles.listIcon}>
-                <Feather name="file-text" size={18} color={COLORS.blue} />
+              <View style={styles.listIconWrap}>
+                <Feather name="file-text" size={16} color={COLORS.blue} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.listTitle}>{item.title}</Text>
-                <Text style={styles.listId}>{item.id}</Text>
+                <Text style={styles.listMeta}>{item.id} · {item.date}</Text>
               </View>
-              <View style={[styles.statusBadge, { backgroundColor: STATUS_COLORS[item.status].bg }]}>
-                <Text style={[styles.statusText, { color: STATUS_COLORS[item.status].text }]}>
+              <View style={[styles.badge, { backgroundColor: STATUS_COLORS[item.status].bg }]}>
+                <Text style={[styles.badgeText, { color: STATUS_COLORS[item.status].text }]}>
                   {item.status}
                 </Text>
               </View>
@@ -170,40 +135,56 @@ const DashboardScreen = ({ navigation }: any) => {
           ))}
         </View>
 
-        {/* ── Safety Tips ── */}
+        {/* Safety Tips */}
         <Text style={styles.section}>Safety Tips</Text>
-        <View style={styles.tipBox}>
+        <View style={styles.tipsCard}>
           {[
-            'Use strong, unique passwords for each account',
-            'Never share OTPs or passwords with anyone',
-            'Save screenshots before blocking abusers',
-            'Report cybercrime to Nepal Police Cyber Bureau',
+            '🔐 Use strong, unique passwords for each account',
+            '📵 Never share OTPs or passwords with anyone',
+            '📸 Save screenshots before blocking abusers',
+            '🚨 Report to Nepal Police Cyber Bureau immediately',
           ].map((tip, i) => (
-            <View key={i} style={styles.tipRow}>
-              <View style={styles.tipDot} />
-              <Text style={styles.tip}>{tip}</Text>
+            <View key={i} style={[styles.tipRow, i < 3 && styles.tipBorder]}>
+              <Text style={styles.tipText}>{tip}</Text>
             </View>
           ))}
         </View>
 
-        {/* ── Learning Progress ── */}
-        <Text style={styles.section}>Learning Progress</Text>
-        <Pressable
-          onPress={() => navigation.navigate('SafetyLearning')}
-          style={({ pressed }) => [styles.progressCard, pressed && { opacity: 0.9 }]}
-        >
-          <View>
-            <Text style={styles.progressLabel}>Current Level</Text>
-            <Text style={styles.progressLevel}>Cyber Defender</Text>
-            <Text style={styles.progressSub}>Complete 2 quizzes to level up</Text>
+        {/* Nepal Cyber Bureau Contact */}
+        <Text style={styles.section}>Nepal Cyber Bureau</Text>
+        <View style={styles.bureauCard}>
+          <View style={styles.bureauRow}>
+            <View style={styles.bureauIcon}>
+              <Feather name="phone" size={18} color={COLORS.blue} />
+            </View>
+            <View>
+              <Text style={styles.bureauLabel}>Helpline</Text>
+              <Text style={styles.bureauValue}>01-4412439</Text>
+            </View>
           </View>
-          <View style={styles.pointsCircle}>
-            <Text style={styles.pointsNum}>850</Text>
-            <Text style={styles.pointsLabel}>pts</Text>
+          <View style={styles.bureauDivider} />
+          <View style={styles.bureauRow}>
+            <View style={styles.bureauIcon}>
+              <Feather name="mail" size={18} color={COLORS.blue} />
+            </View>
+            <View>
+              <Text style={styles.bureauLabel}>Email</Text>
+              <Text style={styles.bureauValue}>info@cybercrime.gov.np</Text>
+            </View>
           </View>
-        </Pressable>
+          <View style={styles.bureauDivider} />
+          <View style={styles.bureauRow}>
+            <View style={styles.bureauIcon}>
+              <Feather name="map-pin" size={18} color={COLORS.blue} />
+            </View>
+            <View>
+              <Text style={styles.bureauLabel}>Location</Text>
+              <Text style={styles.bureauValue}>Naxal, Kathmandu, Nepal</Text>
+            </View>
+          </View>
+        </View>
 
-        <View style={{ height: 28 }} />
+        <View style={{ height: 20 }} />
       </ScrollView>
     </SafeAreaView>
   );
@@ -215,49 +196,49 @@ const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: COLORS.bg },
   scroll: { padding: 16 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  logoBox: { width: 60, height: 60, borderRadius: 16 },
+  logoBox: { width: 52, height: 52, borderRadius: 14 },
   headerTextWrap: { flex: 1, marginLeft: 10 },
-  title: { fontSize: 22, fontWeight: 'bold', color: COLORS.blue },
-  subtitle: { fontSize: 13, color: COLORS.textLight },
-  bell: { backgroundColor: COLORS.white, padding: 10, borderRadius: 20 },
-  hero: { backgroundColor: COLORS.white, padding: 16, borderRadius: 16, marginTop: 16, flexDirection: 'row', alignItems: 'center', borderWidth: 0, borderLeftWidth: 4, borderLeftColor: COLORS.red, borderColor: 'transparent' },
-  heroTitle: { fontSize: 18, fontWeight: 'bold', color: COLORS.textDark },
-  heroText: { fontSize: 14, color: COLORS.textLight, marginTop: 6 },
-  profileMini: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.lightRed, justifyContent: 'center', alignItems: 'center' },
-  section: { marginTop: 20, fontSize: 18, fontWeight: 'bold', color: COLORS.textDark },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between' },
-  card: { width: '48%', backgroundColor: COLORS.white, padding: 16, borderRadius: 14, marginTop: 10, borderWidth: 1.5, borderColor: COLORS.border },
-  iconWrap: { padding: 12, borderRadius: 30, marginBottom: 10, alignSelf: 'flex-start' },
-  cardTitle: { fontSize: 14, fontWeight: '700', color: COLORS.textDark },
-  cardSub: { fontSize: 12, color: COLORS.textLight, marginTop: 4 },
-  row: { flexDirection: 'row', justifyContent: 'space-between' },
-  smallCard: { backgroundColor: COLORS.white, padding: 16, borderRadius: 12, width: '30%', alignItems: 'center', marginTop: 10 },
-  num: { fontSize: 22, fontWeight: 'bold' },
-  label: { fontSize: 12, color: COLORS.textLight },
-  challengeCard: { backgroundColor: COLORS.white, padding: 16, borderRadius: 14, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  challengeLeft: { flexDirection: 'row', alignItems: 'center', flex: 1, marginRight: 10 },
-  challengeIcon: { width: 42, height: 42, borderRadius: 21, backgroundColor: COLORS.lightOrange, justifyContent: 'center', alignItems: 'center', marginRight: 10 },
-  challengeTitle: { fontSize: 14, fontWeight: '700', color: COLORS.textDark },
-  challengeText: { fontSize: 12, color: COLORS.textLight, marginTop: 2 },
-  challengeBtn: { backgroundColor: COLORS.orange, paddingHorizontal: 14, paddingVertical: 9, borderRadius: 10 },
-  challengeBtnText: { color: COLORS.white, fontWeight: '700' },
-  listCard: { backgroundColor: COLORS.white, borderRadius: 14, paddingHorizontal: 14, marginTop: 10 },
+  title: { fontSize: 20, fontWeight: 'bold', color: COLORS.blue },
+  subtitle: { fontSize: 12, color: COLORS.textLight },
+  headerBtn: { padding: 10, borderRadius: 20, backgroundColor: COLORS.white },
+  hero: {
+    backgroundColor: COLORS.white, padding: 16, borderRadius: 16, marginTop: 14,
+    flexDirection: 'row', alignItems: 'center',
+    borderWidth: 0, borderLeftWidth: 4, borderLeftColor: COLORS.red, borderColor: 'transparent',
+  },
+  heroTitle: { fontSize: 16, fontWeight: 'bold', color: COLORS.textDark },
+  heroText: { fontSize: 13, color: COLORS.textLight, marginTop: 4, lineHeight: 18 },
+  profileMini: { width: 40, height: 40, borderRadius: 20, backgroundColor: COLORS.lightRed, justifyContent: 'center', alignItems: 'center' },
+  statsRow: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 14 },
+  statCard: { backgroundColor: COLORS.white, borderRadius: 12, padding: 14, width: '31%', alignItems: 'center', borderTopWidth: 3, borderWidth: 1, borderColor: COLORS.border },
+  statNum: { fontSize: 24, fontWeight: 'bold' },
+  statLabel: { fontSize: 11, color: COLORS.textLight, marginTop: 2 },
+  section: { marginTop: 20, fontSize: 17, fontWeight: 'bold', color: COLORS.textDark },
+  sectionHeader: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 20 },
+  seeAll: { fontSize: 13, color: COLORS.blue, fontWeight: '600' },
+  actionsGrid: { flexDirection: 'row', justifyContent: 'space-between', marginTop: 10 },
+  actionCard: {
+    width: '23%', backgroundColor: COLORS.white, borderRadius: 14, padding: 12,
+    alignItems: 'center', borderTopWidth: 3, borderWidth: 1, borderColor: COLORS.border,
+  },
+  actionIcon: { width: 48, height: 48, borderRadius: 24, justifyContent: 'center', alignItems: 'center', marginBottom: 8 },
+  actionTitle: { fontSize: 11, fontWeight: '700', textAlign: 'center' },
+  listCard: { backgroundColor: COLORS.white, borderRadius: 14, paddingHorizontal: 14, marginTop: 10, borderWidth: 1, borderColor: COLORS.border },
   listRow: { flexDirection: 'row', alignItems: 'center', paddingVertical: 12, gap: 10 },
   listBorder: { borderBottomWidth: 1, borderBottomColor: COLORS.border },
-  listIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.lightBlue, justifyContent: 'center', alignItems: 'center' },
-  listTitle: { fontSize: 14, fontWeight: '600', color: COLORS.textDark },
-  listId: { fontSize: 12, color: COLORS.textLight, marginTop: 2 },
-  statusBadge: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: 999 },
-  statusText: { fontSize: 11, fontWeight: '700' },
-  tipBox: { backgroundColor: COLORS.white, padding: 16, borderRadius: 12, marginTop: 10 },
-  tipRow: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, marginBottom: 8 },
-  tipDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: COLORS.blue, marginTop: 6 },
-  tip: { flex: 1, fontSize: 14, color: COLORS.textDark, lineHeight: 20 },
-  progressCard: { backgroundColor: COLORS.blue, borderRadius: 16, padding: 18, marginTop: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' },
-  progressLabel: { fontSize: 12, color: 'rgba(255,255,255,0.7)' },
-  progressLevel: { fontSize: 20, fontWeight: 'bold', color: COLORS.white, marginTop: 2 },
-  progressSub: { fontSize: 12, color: 'rgba(255,255,255,0.7)', marginTop: 4 },
-  pointsCircle: { width: 72, height: 72, borderRadius: 36, backgroundColor: 'rgba(255,255,255,0.2)', justifyContent: 'center', alignItems: 'center' },
-  pointsNum: { fontSize: 22, fontWeight: 'bold', color: COLORS.white },
-  pointsLabel: { fontSize: 11, color: 'rgba(255,255,255,0.7)' },
+  listIconWrap: { width: 34, height: 34, borderRadius: 17, backgroundColor: COLORS.lightBlue, justifyContent: 'center', alignItems: 'center' },
+  listTitle: { fontSize: 13, fontWeight: '600', color: COLORS.textDark },
+  listMeta: { fontSize: 11, color: COLORS.textLight, marginTop: 2 },
+  badge: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 999 },
+  badgeText: { fontSize: 10, fontWeight: '700' },
+  tipsCard: { backgroundColor: COLORS.white, borderRadius: 14, marginTop: 10, borderWidth: 1, borderColor: COLORS.border },
+  tipRow: { paddingHorizontal: 16, paddingVertical: 12 },
+  tipBorder: { borderBottomWidth: 1, borderBottomColor: COLORS.border },
+  tipText: { fontSize: 13, color: COLORS.textDark, lineHeight: 18 },
+  bureauCard: { backgroundColor: COLORS.white, borderRadius: 14, marginTop: 10, borderWidth: 1, borderColor: COLORS.border },
+  bureauRow: { flexDirection: 'row', alignItems: 'center', padding: 14, gap: 12 },
+  bureauDivider: { height: 1, backgroundColor: COLORS.border },
+  bureauIcon: { width: 38, height: 38, borderRadius: 19, backgroundColor: COLORS.lightBlue, justifyContent: 'center', alignItems: 'center' },
+  bureauLabel: { fontSize: 11, color: COLORS.textLight },
+  bureauValue: { fontSize: 14, fontWeight: '600', color: COLORS.textDark, marginTop: 2 },
 });
